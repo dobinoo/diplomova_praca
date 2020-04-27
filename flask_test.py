@@ -44,6 +44,8 @@ robot_pos3_height = 37
 #default change to give position_data
 
 robot_change_height = 90
+# robot_change_stretch
+# robot_change_rotation
 ########################
 
 
@@ -96,6 +98,10 @@ arduino_actual_position = 0
 def arduino_sleep(travel_distance):
     wait_time = int(travel_distance / 7) + 1        #7 is 7cm per 1s
     return wait_time
+
+def arduino_reset():
+    arduino.arduino_send(0,"R")                          #for resetting values in arduino (in case of server reset and not arduino)
+    return
 
 #shortest way from experiment to experiment
 def arduino_shortest_way(arduino_pos):
@@ -241,7 +247,7 @@ def unpause_function():
 def ExprimentA(message):
     global arduino_pos1
     print("Moving")
-    arduino_shortest_way(arduino_pos1)  #send arduino to experiment A with pos1
+    #arduino_shortest_way(arduino_pos1)  #send arduino to experiment A with pos1
     robot_take(1)
     print("A")
     unpause_function()
@@ -252,7 +258,7 @@ def ExprimentB(message):
     global arduino_pos2
     print("Moving")
     arduino_shortest_way(arduino_pos2)  #send arduino to experiment B with pos2
-    robot_take(2)
+    #robot_take(2)
     print("B")
     unpause_function()
 
@@ -263,7 +269,7 @@ def ExprimentC(message):
     global arduino_pos3
     print("Moving")
     arduino_shortest_way(arduino_pos3)  #send arduino to experiment B with pos3
-    robot_take(3)
+    #robot_take(3)
     print("C")
     unpause_function()
 
@@ -309,6 +315,7 @@ def initialize():
 
     try:
         ser = serial.Serial('/dev/ttyUSB0',115200)
+        arduino_reset()
         print(Fore.BLUE + "Arduino UNO\n")
     except:
         test_a = False
