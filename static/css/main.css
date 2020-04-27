@@ -1,0 +1,117 @@
+.header {
+  padding: 10px 16px;
+  background: #555;
+  color: #f1f1f1;
+  text-align: center;
+}
+
+body {
+  margin: 0;
+  font-family: Arial;
+  background-color: #F0F6FF;
+}
+
+footer{
+position: fixed;
+left: 0;
+bottom: 0;
+width: 100%;
+font-size:30px;
+text-align: center;
+}
+
+Button {
+	box-shadow: 0px 10px 14px -7px #276873;
+	background:linear-gradient(to bottom, #599bb3 5%, #408c99 100%);
+	background-color:#669DB3FF;
+	border-radius:42px;
+	display:inline-block;
+	cursor:pointer;
+	color:#ffffff;
+	font-family:Arial;
+
+	font-weight:bold;
+	padding:13px 32px;
+	text-decoration:none;
+	text-shadow:0px 1px 0px #3d768a;
+  margin: 30px;
+}
+
+Button:hover {
+	background:linear-gradient(to bottom, #408c99 5%, #599bb3 100%);
+	background-color:#408c99;
+}
+
+Button:active {
+	position:relative;
+	top:1px;
+}
+
+.main_buttons{
+  font-size:32px;
+  position: relative;
+  margin-top: 10px;
+  margin-left: 440px;
+  padding: 35px;
+}
+
+.blockA{
+  position: relative;
+  margin-left: 30px;
+  margin-top: 60px;
+}
+.blockB{
+  text-align: center;
+  position:relative;
+  padding-top: 10px;
+  margin-left: 700px;
+  font-size: 32px;
+
+}
+.form{
+  position: relative;
+  margin-left:auto;
+  margin-top: 160px;
+  font-size:32px;
+}
+
+
+#forward{
+  font-size:26px;
+}
+
+#backward{
+  font-size:26px;
+}
+
+#button_position{
+  font-size:32px;
+}
+
+#button_distance{
+  margin-left: 90px;
+  font-size:32px;
+}
+
+#distance{
+  font-size:32px;
+}
+
+#name{
+  font-size:32px;
+}
+
+.block{
+  margin-top: 20px;
+}
+
+input[type=radio] {
+    width: 10%;
+    height: 1em;
+}
+
+
+.testik{
+  display: inline-block;
+  margin-right: :10px;
+}
