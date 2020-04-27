@@ -7,7 +7,6 @@ import sys                                          #system library
 import os                                           #os library
 import time                                         #time library
 import csv                                          #coma separated values library
-import arduino                                      #script for arduino moving
 #import robot_moving
 
 print("\033c", end="")
