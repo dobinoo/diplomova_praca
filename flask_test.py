@@ -369,7 +369,7 @@ def initialize():
     try:
         global swift
         #need to change
-        sys.path.append(os.path.join(os.path.dirname(__file__), '../../Apps/uArm-Python-SDK'))      #link to uArm SwiftPro python3.x.x library
+        sys.path.append(os.path.join(os.path.dirname(__file__), '../uArm-Python-SDK'))      #link to uArm SwiftPro python3.x.x library
         swift = SwiftAPI(filters={'hwid': 'USB VID:PID=2341:0042'})
         swift.waiting_ready(timeout=5)
         swift.set_mode(0)
