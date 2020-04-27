@@ -57,43 +57,76 @@ socketio = SocketIO(app, async_mode=async_mode)
 
 arduino_actual_position = 0
 
-# #setting up Arduino
-# try:
-#     ser = serial.Serial('/dev/ttyUSB0',115200)
-#     time.sleep(2)
-#     print(Fore.BLUE + "Arduino UNO\n")
-# except:
-#     test_a = False
-#     print(Fore.RED + "FAILED CONNECT TO ARDUINO!")
-#     print(Style.RESET_ALL)
-#
-#
-# #setting up uArm SwiftPro
-# try:
-#     sys.path.append(os.path.join(os.path.dirname(__file__), '../DP/uArm-Python-SDK'))
-#     swift = SwiftAPI(filters={'hwid': 'USB VID:PID=2341:0042'})
-#     swift.waiting_ready(timeout=5)
-#     device_info = swift.get_device_info()
-#     print(Fore.BLUE)
-#     print(device_info)
-#     print("\n")
-#     time.sleep(3)
-# except:
-#     test_b = False
-#     print(Fore.RED + "FAILED CONNECT TO uArm SwiftPro")
-#     print(Style.RESET_ALL)
-#
-# if test_a and test_b:
-#     print(Fore.GREEN + "DONE!\n")
-#
-# print(Style.RESET_ALL)
-
-
-
-
-
-
 ##############################arduino functions########################
+def arduino_send(number, direction):
+    global name
+    global ser
+
+    #ser = serial.Serial('/dev/ttyUSB0',115200,timeout=2);     #serial name for arduino getting it from global (from initialization)
+    #ser.open()
+    #print(ser.name)
+    #ser.flush()                                     #flushing serial
+
+    #checking if arduino is reseting
+    if(direction == "R"):
+        message = "000RE"
+        print(Fore.BLUE + "Resetting arduino\n")
+        print(Style.RESET_ALL)
+    else:
+        print(Fore.BLUE + "Converting to bytes:\n")
+        print(Style.RESET_ALL)
+
+        #fixing number
+        if number < 10:
+            updated_number = "00" + str(number)
+
+        if number < 100:
+            if number >= 10:
+                updated_number = "0" + str(number)
+
+        if number >= 100:
+            updated_number = str(number)
+        ##############
+
+        message = updated_number + direction + "E"     #E is ending character for arduino
+        print(message)
+
+    try:
+        ser.write(message.encode())                    #converting and sending to arduino
+    except:
+        print(Fore.RED + "Cant send data to arduino -- arduino.py\n")
+        print(Style.RESET_ALL)
+
+    return
+
+#function to arduino to move
+def arduino_move(number_input, direction):
+    global arduino_actual_position
+    actual_distance = arduino_actual_position
+    max_distance = 135
+    number = int(number_input)
+
+    #direction checking
+    if direction == "F":
+        if actual_distance + number<= 135:
+            actual_distance = actual_distance + number
+            arduino_send(number, direction)
+            print("\nIt will now move " + str(number_input) + "cm" + " forward\n")
+        else:
+            print(Fore.RED + "Cant move that direction, current position: ",actual_distance)
+            print(Style.RESET_ALL + "\n\n")
+
+    elif direction == "B":
+        if actual_distance - number >= 0:
+            actual_distance = actual_distance - number
+            arduino_send(number, direction)
+            print("It will now move " + str(number_input) + "cm" + " backward\n")
+        else:
+            print(Fore.RED  + "Cant move that direction, current position: ",actual_distance)
+            print(Style.RESET_ALL + "\n\n")
+    return
+
+
 #how long wait and pause buttons for arduino
 def arduino_sleep(travel_distance):
     wait_time = int(travel_distance / 7) + 1        #7 is 7cm per 1s
@@ -247,7 +280,7 @@ def unpause_function():
 def ExprimentA(message):
     global arduino_pos1
     print("Moving")
-    #arduino_shortest_way(arduino_pos1)  #send arduino to experiment A with pos1
+    arduino_shortest_way(arduino_pos1)  #send arduino to experiment A with pos1
     robot_take(1)
     print("A")
     unpause_function()
@@ -269,7 +302,7 @@ def ExprimentC(message):
     global arduino_pos3
     print("Moving")
     arduino_shortest_way(arduino_pos3)  #send arduino to experiment B with pos3
-    #robot_take(3)
+    robot_take(3)
     print("C")
     unpause_function()
 
@@ -278,7 +311,8 @@ def ExprimentC(message):
 def DistanceMoving(direction,number):
     global arduino_actual_position
 
-    arduino.arduino_move(int(number),str(direction))
+    # arduino.arduino_move(int(number),str(direction))
+    arduino_move(int(number),str(direction))
     arduino_position_update(int(number),direction)
     time.sleep(arduino_sleep(int(number)))
     unpause_function()
@@ -293,7 +327,7 @@ def RobotPosition(array):
     stretch = array[1]
     rotate = array[2]
 
-    robot_position(int(stretch),int(rotate),int(height))
+    robot_position(int(stretch),int(rotate),int(height)) #setting specific position
     robot_waiting()
     #swift.set_polar(stretch=stretch,rotation=rotate,height=height,speed=100000)
     #robot_moving.move(stretch,rotate,height)
@@ -308,14 +342,23 @@ def index():
     return render_template('index.html', async_mode=socketio.async_mode)
 
 
-@app.before_first_request
+#initializing connections between raspberry and arduino/uArm
+@app.before_first_request       #must do in function under this annotation otherwise restart 2 times and causing error
 def initialize():
     test_a = True
     test_b = True
 
     try:
-        ser = serial.Serial('/dev/ttyUSB0',115200)
-        arduino_reset()
+        global serial_name
+        global ser
+
+        #serial_name = input("Please enter arduino port: ")
+        #serial_name = "/dev/" + serial_name
+        #ser.flush()
+        #print(ser.name)
+        #arduino_reset()
+
+        ser = serial.Serial('/dev/ttyUSB0',115200,timeout=2)        #arduino serial
         print(Fore.BLUE + "Arduino UNO\n")
     except:
         test_a = False
@@ -327,7 +370,7 @@ def initialize():
     try:
         global swift
         #need to change
-        sys.path.append(os.path.join(os.path.dirname(__file__), '../../Apps/uArm-Python-SDK'))
+        sys.path.append(os.path.join(os.path.dirname(__file__), '../../Apps/uArm-Python-SDK'))      #link to uArm SwiftPro python3.x.x library
         swift = SwiftAPI(filters={'hwid': 'USB VID:PID=2341:0042'})
         swift.waiting_ready(timeout=5)
         swift.set_mode(0)
@@ -350,8 +393,8 @@ def initialize():
 #starting server
 if __name__ == "__main__":
     try:
-        socketio.run(app, host='0.0.0.0', port=80, debug=True, use_reloader=False)
         #app.run(host='0.0.0.0', port=80, debug=False, use_reloader=False)
+        socketio.run(app, host='0.0.0.0', port=80, debug=True, use_reloader=False)          #starting app , 0.0.0.0 (on device local ip adress, eg 192.168.0.112) , on port 80, with debug and no reloader (restart server after changes)
         #socketio.run(app, host='0.0.0.0', port=80, debug=True)
     except:
         print(Fore.RED + "ERROR STARTING SERVER")

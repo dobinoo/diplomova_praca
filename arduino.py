@@ -5,11 +5,15 @@ from colorama import Fore, Style
 from time import sleep
 from flask_test import arduino_actual_position
 
+
 actual_distance = arduino_actual_position
 
 #moving number checking
 def arduino_send(number, direction):
-    ser = serial.Serial('/dev/ttyUSB0',115200);     #serial name for arduino
+    global name
+    ser = serial.Serial('/dev/ttyUSB0',115200,timeout=2);     #serial name for arduino
+    #ser.open()
+    #print(ser.name)
     #ser.flush()                                     #flushing serial
 
     #checking if arduino is reseting
