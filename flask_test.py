@@ -292,7 +292,7 @@ def ExprimentB(message):
     global arduino_pos2
     print("Moving")
     arduino_shortest_way(arduino_pos2)  #send arduino to experiment B with pos2
-    #robot_take(2)
+    robot_take(2)
     print("B")
     unpause_function()
 
