@@ -142,6 +142,8 @@ def arduino_shortest_way(arduino_pos):
     if(arduino_pos-arduino_actual_position>0):
         arduino_move(int(arduino_pos-arduino_actual_position),"F")
         arduino_position_update(arduino_pos-arduino_actual_position,"F")
+        print("Pos: ",arduino_pos)
+        print("Actual position", arduino_actual_position)
         print("Sleeping for: ",int(arduino_pos-arduino_actual_position))
         sleep = int(arduino_pos-arduino_actual_position)
         time.sleep(arduino_sleep(sleep))
