@@ -276,67 +276,67 @@ def unpause_function():
     print("Unpausing buttons")
     return
 
-def background_thread(args):
+
 #Experiment A
-    @socketio.on('a_place', namespace='/test')
-    def ExprimentA(message):
-        global arduino_pos1
-        print("Moving")
-        arduino_shortest_way(arduino_pos1)  #send arduino to experiment A with pos1
-        robot_take(1)
-        print("A")
-        unpause_function()
+@socketio.on('a_place', namespace='/test')
+def ExprimentA(message):
+    global arduino_pos1
+    print("Moving")
+    arduino_shortest_way(arduino_pos1)  #send arduino to experiment A with pos1
+    robot_take(1)
+    print("A")
+    unpause_function()
 
-    #Experiment B
-    @socketio.on('b_place', namespace='/test')
-    def ExprimentB(message):
-        global arduino_pos2
-        print("Moving")
-        arduino_shortest_way(arduino_pos2)  #send arduino to experiment B with pos2
-        robot_take(2)
-        print("B")
-        unpause_function()
+#Experiment B
+@socketio.on('b_place', namespace='/test')
+def ExprimentB(message):
+    global arduino_pos2
+    print("Moving")
+    arduino_shortest_way(arduino_pos2)  #send arduino to experiment B with pos2
+    robot_take(2)
+    print("B")
+    unpause_function()
 
-    #Experiment C
-    @socketio.on('c_place', namespace='/test')
-    def ExprimentC(message):
-        #global arduino_actual_position
-        global arduino_pos3
-        print("Moving")
-        arduino_shortest_way(arduino_pos3)  #send arduino to experiment B with pos3
-        robot_take(3)
-        print("C")
-        unpause_function()
+#Experiment C
+@socketio.on('c_place', namespace='/test')
+def ExprimentC(message):
+    #global arduino_actual_position
+    global arduino_pos3
+    print("Moving")
+    arduino_shortest_way(arduino_pos3)  #send arduino to experiment B with pos3
+    robot_take(3)
+    print("C")
+    unpause_function()
 
-    #button distance onclick
-    @socketio.on('distance', namespace='/test')
-    def DistanceMoving(direction,number):
-        global arduino_actual_position
+#button distance onclick
+@socketio.on('distance', namespace='/test')
+def DistanceMoving(direction,number):
+    global arduino_actual_position
 
-        # arduino.arduino_move(int(number),str(direction))
-        arduino_move(int(number),str(direction))
-        arduino_position_update(int(number),direction)
-        time.sleep(arduino_sleep(int(number)))
-        unpause_function()
-        print("direction: ",direction)
-        print("distance",number)
+    # arduino.arduino_move(int(number),str(direction))
+    arduino_move(int(number),str(direction))
+    arduino_position_update(int(number),direction)
+    time.sleep(arduino_sleep(int(number)))
+    unpause_function()
+    print("direction: ",direction)
+    print("distance",number)
 
-    #button robot position onclick
-    @socketio.on('position', namespace='/test')
-    def RobotPosition(array):
-        global swift
-        height = array[0]
-        stretch = array[1]
-        rotate = array[2]
+#button robot position onclick
+@socketio.on('position', namespace='/test')
+def RobotPosition(array):
+    global swift
+    height = array[0]
+    stretch = array[1]
+    rotate = array[2]
 
-        robot_position(int(stretch),int(rotate),int(height)) #setting specific position
-        robot_waiting()
-        #swift.set_polar(stretch=stretch,rotation=rotate,height=height,speed=100000)
-        #robot_moving.move(stretch,rotate,height)
-        unpause_function()
-        print(height)
-        print(stretch)
-        print(rotate)
+    robot_position(int(stretch),int(rotate),int(height)) #setting specific position
+    robot_waiting()
+    #swift.set_polar(stretch=stretch,rotation=rotate,height=height,speed=100000)
+    #robot_moving.move(stretch,rotate,height)
+    unpause_function()
+    print(height)
+    print(stretch)
+    print(rotate)
 
 #default path (what server loads on start)
 @app.route('/')
