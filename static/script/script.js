@@ -33,6 +33,8 @@ $(document).ready(function() {
 		document.getElementById("button_c").disabled = true;
 		document.getElementById("button_position").disabled = true;
 		document.getElementById("button_distance").disabled = true;
+		document.getElementById("button_default_position").disabled = true;
+
   	return;
 	}
 //////////////////
@@ -44,6 +46,8 @@ $(document).ready(function() {
 		document.getElementById("button_c").disabled = false;
 		document.getElementById("button_position").disabled = false;
 		document.getElementById("button_distance").disabled = false;
+		document.getElementById("button_default_position").disabled = false;
+		console.log("Upaused");
   	return;
 	}
 	/////////////////
@@ -103,7 +107,7 @@ $(document).ready(function() {
 //buttons click function experiment A
 	$('#button_a').click(function(event) {
 		console.log("Button A");
-		socket.emit('a_place', {value: $(this).val()});
+		socket.emit('a_place');
 		Pause();
 		console.log("pausing");
 		return false;
@@ -112,7 +116,7 @@ $(document).ready(function() {
 	//button experiment B
 	$('#button_b').click(function(event) {
 		console.log("Button B");
-		socket.emit('b_place', {value: $(this).val()});
+		socket.emit('b_place');
 		Pause();
 		console.log("pausing");
 		return false;
@@ -121,7 +125,7 @@ $(document).ready(function() {
 	//button experiment C
 	$('#button_c').click(function(event) {
 		console.log("Button C");
-		socket.emit('c_place', {value: $(this).val()});
+		socket.emit('c_place');
 		Pause();
 		console.log("pausing");
 		return false;
@@ -157,6 +161,14 @@ $(document).ready(function() {
 		else{
 			alert("Error you didnt enter correct robot position!")
 		}
+	});
+
+	$('#button_default_position').click(function(event) {
+		console.log("Button robot default position");
+		socket.emit('default_pos');
+		Pause();
+		console.log("pausing");
+		return false;
 	});
 ///////////////////////////
 

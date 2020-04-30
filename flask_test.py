@@ -13,36 +13,63 @@ print("\033c", end="")
 print("Connect to webserver\n")
 time.sleep(2)
 print("Preparing Arduino and uArm SwiftPro please wait\n")
-#test_a = True
-#test_b = True
+
 
 #arduino positions (can be change for specific requirement)
 arduino_pos1 = 28
 arduino_pos2 = 75
 arduino_pos3 = 116
 
-
+#arduino maximal position
 arduino_max = 135
+###########################################################
 
-#Robot position globals
-#pos1
-robot_pos1_stretch = 207
-robot_pos1_rotate = 88
-robot_pos1_height = 40
 
-#pos2
-robot_pos2_stretch = 200
-robot_pos2_rotate = 91
-robot_pos2_height = 37
+#######################Robot position globals#############################
+#default uArm position
+default_stretch = 151
+default_rotation = 90
+default_height = 80
 
-#pos3
-robot_pos3_stretch = 215
-robot_pos3_rotate = 88
-robot_pos3_height = 37
+######################Position1#####################
+#robot pos1 pick
+robot_pos1_pick_stretch = 207
+robot_pos1_pick_rotate = 88
+robot_pos1_pick_height = 40
 
-#default change to give position_data
+#robot pos1 drop
+robot_pos1_drop_stretch = 207
+robot_pos1_drop_rotate = 88
+robot_pos1_drop_height = 131
+#####################################################
 
-robot_change_height = 90
+######################Position2#####################
+#robot pos2 pick
+robot_pos2_pick_stretch = 200
+robot_pos2_pick_rotate = 91
+robot_pos2_pick_height = 37
+
+#robot pos2 drop
+robot_pos2_drop_stretch = 200
+robot_pos2_drop_rotate = 91
+robot_pos2_drop_height = 128
+
+#####################################################
+######################Position3#####################
+#robot pos3 pick
+robot_pos3_pick_stretch = 215
+robot_pos3_pick_rotate = 90
+robot_pos3_pick_height = 37
+
+#robot pos3 drop
+robot_pos3_drop_stretch = 215
+robot_pos3_drop_rotate = 90
+robot_pos3_drop_height = 128
+#####################################################
+
+
+#default change to give position_data (changed for specific position) - obsolete
+#robot_change_height = 90
 # robot_change_stretch
 # robot_change_rotation
 ########################
@@ -132,7 +159,7 @@ def arduino_sleep(travel_distance):
     return wait_time
 
 def arduino_reset():
-    arduino.arduino_send(0,"R")                          #for resetting values in arduino (in case of server reset and not arduino)
+    arduino_send(0,"R")                          #for resetting values in arduino (in case of server reset and not arduino)
     return
 
 #shortest way from experiment to experiment
@@ -177,89 +204,86 @@ def arduino_position_update(change,direction):
 #default robot position to not collide#
 def default_robot_position():
     global swift
-    swift.set_polar(stretch=151,rotation=90,height=80,speed=100000)
+    global default_stretch
+    global default_rotation
+    global default_height
+
+    swift.set_polar(stretch=default_stretch,rotation=default_rotation,height=default_height,speed=100000)
     time.sleep(3)
     return
 
 #set robot to certain position
-def robot_position(stretch, rotation ,height):
+def robot_position(stretch, rotation ,height,speed):
     global swift
-    swift.set_polar(stretch=stretch,rotation=rotation,height=height,speed=100000)
-    print(stretch)
-    print(rotation)
-    print(height)
+    swift.set_polar(stretch=stretch,rotation=rotation,height=height,speed=speed)
+    robot_waiting()
+    #print(stretch)
+    #print(rotation)
+    #print(height)
+    return
+
+def robot_gripper(catch):
+    swift.set_gripper(catch=catch)
     time.sleep(3)
     return
 
 #taking and grabing
 def robot_take(pos):
-    global swift
-    global robot_pos1_stretch,robot_pos1_rotate, robot_pos1_height
-    global robot_pos2_stretch,robot_pos2_rotate, robot_pos2_height
-    global robot_pos3_stretch,robot_pos3_rotate, robot_pos3_height
-    global robot_change_height
+    #global swift
+    #position 1
+    global robot_pos1_pick_stretch,robot_pos1_pick_rotate, robot_pos1_pick_height
+    global robot_pos1_drop_stretch,robot_pos1_drop_rotate, robot_pos1_drop_height
+
+    #position 2
+    global robot_pos2_pick_stretch,robot_pos2_pick_rotate, robot_pos2_pick_height
+    global robot_pos2_drop_stretch,robot_pos2_drop_rotate, robot_pos2_drop_height
+
+    #position 3
+    global robot_pos3_pick_stretch,robot_pos3_pick_rotate, robot_pos3_pick_height
+    global robot_pos3_drop_stretch,robot_pos3_drop_rotate, robot_pos3_drop_height
+
+    speed = 100000
+
+    #obsolete
+    #global robot_change_height
 
 
     if(pos == 1):
-        swift.set_polar(stretch=robot_pos1_stretch,rotation=robot_pos1_rotate,height=robot_pos1_height,speed=100000)  #take position
-        #robot_position(robot_pos1_stretch,robot_pos1_rotate, robot_pos1_height)
-        robot_waiting()
-        swift.set_gripper(catch=True)                                   #catch ball
-        time.sleep(3)
-        swift.set_polar(stretch=robot_pos1_stretch-54,rotation=robot_pos1_rotate,height=robot_pos1_height + 10,speed=100000)  #take position
-        robot_waiting()
-        swift.set_polar(stretch=robot_pos1_stretch-54,rotation=robot_pos1_rotate,height=142,speed=100000)  #give position
-        robot_waiting()
-        swift.set_polar(stretch=robot_pos1_stretch,rotation=robot_pos1_rotate,height=142,speed=100000)  #give position
-        robot_waiting()
-        swift.set_polar(stretch=robot_pos1_stretch,rotation=robot_pos1_rotate,height=robot_pos1_height + robot_change_height + 1,speed=6000)  #give position
-        robot_waiting()
-        swift.set_gripper(catch=False)                                  #let ball
-        time.sleep(3)
-        swift.set_polar(stretch=robot_pos1_stretch-54,rotation=robot_pos1_rotate,height=140,speed=100000)  #give position #give position
-        robot_waiting()
-        default_robot_position()
+        #swift.set_polar(stretch=robot_pos1_pick_stretch,rotation=robot_pos1_pick_rotate,height=robot_pos1_pick_height,speed=100000)  #take position
+
+        robot_position(robot_pos1_pick_stretch,robot_pos1_pick_rotate, robot_pos1_pick_height,speed)            #pick up ball position
+        robot_gripper(True)                                                                                     #pick up ball
+        default_robot_position()                                                                                #default pos
+        robot_position(default_stretch,robot_pos1_pick_rotate,robot_pos1_drop_height + 5,speed)                 #go up to drop height
+        robot_position(robot_pos1_drop_stretch,robot_pos1_drop_rotate, robot_pos1_drop_height + 5,speed)        #stretch to drop position
+        robot_position(robot_pos1_drop_stretch,robot_pos1_drop_rotate, robot_pos1_drop_height,6000)             #lower to drop position
+        robot_gripper(False)                                                                                    #drop ball
+        robot_position(default_stretch,robot_pos1_pick_rotate,robot_pos1_drop_height + 5,speed)                 #go to default stretch
+        default_robot_position()                                                                                #default position
 
     if(pos == 2):
-        swift.set_polar(stretch=robot_pos2_stretch,rotation=robot_pos2_rotate,height=robot_pos2_height,speed=100000)  #take position
-        #robot_position(robot_pos2_stretch,robot_pos2_rotate, robot_pos2_height)
-        robot_waiting()
-        swift.set_gripper(catch=True)                                   #catch ball
-        time.sleep(3)
-        swift.set_polar(stretch=robot_pos2_stretch-42,rotation=robot_pos2_rotate,height=robot_pos2_height + 10,speed=100000)  #take position
-        robot_waiting()
-        swift.set_polar(stretch=robot_pos2_stretch-42,rotation=robot_pos2_rotate,height=142,speed=100000)  #give position
-        robot_waiting()
-        swift.set_polar(stretch=robot_pos2_stretch,rotation=robot_pos2_rotate,height=142,speed=100000)  #give position
-        robot_waiting()
-        swift.set_polar(stretch=robot_pos2_stretch,rotation=robot_pos2_rotate,height=robot_pos2_height + robot_change_height + 1,speed=6000)  #give position
-        robot_waiting()
-        swift.set_gripper(catch=False)                                  #let ball
-        time.sleep(3)
-        swift.set_polar(stretch=robot_pos2_stretch-42,rotation=robot_pos2_rotate,height=140,speed=100000)  #give position #give position
-        robot_waiting()
-        default_robot_position()
+
+        robot_position(robot_pos2_pick_stretch,robot_pos2_pick_rotate, robot_pos2_pick_height,speed)            #pick up ball position
+        robot_gripper(True)                                                                                     #pick up ball
+        default_robot_position()                                                                                #default pos
+        robot_position(default_stretch,robot_pos2_pick_rotate,robot_pos2_drop_height + 5,speed)                 #go up to drop height
+        robot_position(robot_pos2_drop_stretch,robot_pos2_drop_rotate, robot_pos2_drop_height + 5,speed)        #stretch to drop position
+        robot_position(robot_pos2_drop_stretch,robot_pos2_drop_rotate, robot_pos2_drop_height,6000)             #lower to drop position
+        robot_gripper(False)                                                                                    #drop ball
+        robot_position(default_stretch,robot_pos2_pick_rotate,robot_pos2_drop_height + 5,speed)                 #go to default stretch
+        default_robot_position()                                                                                #default position
 
 
     if(pos == 3):
-        swift.set_polar(stretch=robot_pos3_stretch,rotation=robot_pos3_rotate,height=robot_pos3_height,speed=100000)  #take position
-        #robot_position(robot_pos3_stretch,robot_pos3_rotate, robot_pos3_height)
-        robot_waiting()
-        swift.set_gripper(catch=True)                                   #catch ball
-        time.sleep(3)
-        swift.set_polar(stretch=robot_pos3_stretch-62,rotation=robot_pos3_rotate,height=robot_pos3_height + 10,speed=100000)  #take position
-        robot_waiting()
-        swift.set_polar(stretch=robot_pos3_stretch-62,rotation=robot_pos3_rotate,height=142,speed=100000)  #give position
-        robot_waiting()
-        swift.set_polar(stretch=robot_pos3_stretch,rotation=robot_pos3_rotate,height=142,speed=100000)  #give position
-        robot_waiting()
-        swift.set_polar(stretch=robot_pos3_stretch,rotation=robot_pos3_rotate,height=robot_pos3_height + robot_change_height+1,speed=6000)  #give position
-        robot_waiting()
-        swift.set_gripper(catch=False)                                  #let ball
-        time.sleep(3)
-        swift.set_polar(stretch=robot_pos3_stretch-62,rotation=robot_pos3_rotate,height=142,speed=100000)  #give position #give position
-        robot_waiting()
-        default_robot_position()
+        robot_position(robot_pos3_pick_stretch,robot_pos3_pick_rotate, robot_pos3_pick_height,speed)            #pick up ball position
+        robot_gripper(True)                                                                                     #pick up ball
+        default_robot_position()                                                                                #default pos
+        robot_position(default_stretch,robot_pos3_pick_rotate,robot_pos3_drop_height + 5,speed)                 #go up to drop height
+        robot_position(robot_pos3_drop_stretch,robot_pos3_drop_rotate, robot_pos3_drop_height + 5,speed)        #stretch to drop position
+        robot_position(robot_pos3_drop_stretch,robot_pos3_drop_rotate, robot_pos3_drop_height,6000)             #lower to drop position
+        robot_gripper(False)                                                                                    #drop ball
+        robot_position(default_stretch,robot_pos3_pick_rotate,robot_pos3_drop_height + 5,speed)                 #go to default stretch
+        default_robot_position()                                                                                #default position
 
     return
 
@@ -279,27 +303,29 @@ def unpause_function():
 
 #Experiment A
 @socketio.on('a_place', namespace='/test')
-def ExprimentA(message):
+def ExprimentA():
     global arduino_pos1
     print("Moving")
     arduino_shortest_way(arduino_pos1)  #send arduino to experiment A with pos1
     robot_take(1)
     print("A")
     unpause_function()
+    return
 
 #Experiment B
 @socketio.on('b_place', namespace='/test')
-def ExprimentB(message):
+def ExprimentB():
     global arduino_pos2
     print("Moving")
     arduino_shortest_way(arduino_pos2)  #send arduino to experiment B with pos2
     robot_take(2)
     print("B")
     unpause_function()
+    return
 
 #Experiment C
 @socketio.on('c_place', namespace='/test')
-def ExprimentC(message):
+def ExprimentC():
     #global arduino_actual_position
     global arduino_pos3
     print("Moving")
@@ -307,6 +333,8 @@ def ExprimentC(message):
     robot_take(3)
     print("C")
     unpause_function()
+    return
+
 
 #button distance onclick
 @socketio.on('distance', namespace='/test')
@@ -320,16 +348,26 @@ def DistanceMoving(direction,number):
     unpause_function()
     print("direction: ",direction)
     print("distance",number)
+    return
+
+@socketio.on('default_pos', namespace='/test')
+def DefaultPosition():
+    default_robot_position()
+    print("Going default position\n")
+    unpause_function()
+    return
+
 
 #button robot position onclick
 @socketio.on('position', namespace='/test')
 def RobotPosition(array):
     global swift
+    speed = 100000
     height = array[0]
     stretch = array[1]
     rotate = array[2]
 
-    robot_position(int(stretch),int(rotate),int(height)) #setting specific position
+    robot_position(int(stretch),int(rotate),int(height),speed) #setting specific position
     robot_waiting()
     #swift.set_polar(stretch=stretch,rotation=rotate,height=height,speed=100000)
     #robot_moving.move(stretch,rotate,height)
@@ -337,6 +375,7 @@ def RobotPosition(array):
     print(height)
     print(stretch)
     print(rotate)
+    return
 
 #default path (what server loads on start)
 @app.route('/')
@@ -361,6 +400,7 @@ def initialize():
         #arduino_reset()
 
         ser = serial.Serial('/dev/ttyUSB0',115200,timeout=2)        #arduino serial
+        arduino_reset()
         print(Fore.BLUE + "Arduino UNO\n")
     except:
         test_a = False
@@ -390,7 +430,7 @@ def initialize():
         print(Fore.GREEN + "DONE!\n")
 
     print(Style.RESET_ALL)
-
+    return
 
 #starting server
 if __name__ == "__main__":
