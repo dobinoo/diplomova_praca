@@ -22,16 +22,15 @@ arduino_pos3 = 116
 
 #arduino maximal position
 arduino_max = 135
-###########################################################
 
 
-#######################Robot position globals#############################
 #default uArm position
 default_stretch = 151
 default_rotation = 90
 default_height = 80
 
-######################Position1#####################
+#######################Robot polar position globals#############################
+###############Position1#####################
 #robot pos1 pick
 robot_pos1_pick_stretch = 207
 robot_pos1_pick_rotate = 88
@@ -41,9 +40,9 @@ robot_pos1_pick_height = 40
 robot_pos1_drop_stretch = 207
 robot_pos1_drop_rotate = 88
 robot_pos1_drop_height = 131
-#####################################################
+##############################################
 
-######################Position2#####################
+################Position2#####################
 #robot pos2 pick
 robot_pos2_pick_stretch = 200
 robot_pos2_pick_rotate = 91
@@ -54,8 +53,8 @@ robot_pos2_drop_stretch = 200
 robot_pos2_drop_rotate = 91
 robot_pos2_drop_height = 128
 
-#####################################################
-######################Position3#####################
+###############################################
+################Position3#####################
 #robot pos3 pick
 robot_pos3_pick_stretch = 215
 robot_pos3_pick_rotate = 90
@@ -65,7 +64,7 @@ robot_pos3_pick_height = 37
 robot_pos3_drop_stretch = 215
 robot_pos3_drop_rotate = 90
 robot_pos3_drop_height = 128
-#####################################################
+###############################################
 
 
 #default change to give position_data (changed for specific position) - obsolete
