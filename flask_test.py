@@ -6,10 +6,12 @@ import serial                                       #arduino connection library
 import sys                                          #system library
 import os                                           #os library
 import time                                         #time library
-import csv                                          #coma separated values library
-#import robot_moving
+#import csv                                         #coma separated values library (intendet to create file log) not used
+from conversions import *                           #file responsible for converting from different coordinate system
 
-print("\033c", end="")
+print("\033c", end="")                      #clears command line
+
+#informative text
 print("Connect to webserver\n")
 time.sleep(2)
 print("Preparing Arduino and uArm SwiftPro please wait\n")
@@ -19,17 +21,62 @@ print("Preparing Arduino and uArm SwiftPro please wait\n")
 arduino_pos1 = 28
 arduino_pos2 = 75
 arduino_pos3 = 116
+arduino_actual_position = 0         #arduino start position
+arduino_max = 135                   #arduino maximal position
 
-#arduino maximal position
-arduino_max = 135
 
+#######################Robot cartesian coordinates#############################
+#if true then coordinates are in cartesian system(must be set false to use default values - robot_pos1_pick_stretch, robot_pos1_pick_height ....)
+cartesian = False
 
+#default uArm position
+default_x = 151
+default_y = 90
+default_z = 80
+
+###############Position1#####################
+#robot pos1 pick
+robot_pos1_pick_x = 207
+robot_pos1_pick_y = 88
+robot_pos1_pick_z = 40
+
+#robot pos1 drop
+robot_pos1_drop_x = 207
+robot_pos1_drop_y = 88
+robot_pos1_drop_z = 131
+##############################################
+
+################Position2#####################
+#robot pos2 pick
+robot_pos2_pick_x = 200
+robot_pos2_pick_y = 91
+robot_pos2_pick_z = 37
+
+#robot pos2 drop
+robot_pos2_drop_x = 200
+robot_pos2_drop_y = 91
+robot_pos2_drop_z = 128
+###############################################
+
+################Position3#####################
+#robot pos3 pick
+robot_pos3_pick_x = 215
+robot_pos3_pick_y = 90
+robot_pos3_pick_z = 37
+
+#robot pos3 drop
+robot_pos3_drop_x = 215
+robot_pos3_drop_y = 90
+robot_pos3_drop_z = 128
+###############################################
+#######################Robot cartesian coordinates#############################
+
+#######################Robot polar coordinates#############################
 #default uArm position
 default_stretch = 151
 default_rotation = 90
 default_height = 80
 
-#######################Robot polar position globals#############################
 ###############Position1#####################
 #robot pos1 pick
 robot_pos1_pick_stretch = 207
@@ -52,8 +99,8 @@ robot_pos2_pick_height = 37
 robot_pos2_drop_stretch = 200
 robot_pos2_drop_rotate = 91
 robot_pos2_drop_height = 128
-
 ###############################################
+
 ################Position3#####################
 #robot pos3 pick
 robot_pos3_pick_stretch = 215
@@ -65,7 +112,7 @@ robot_pos3_drop_stretch = 215
 robot_pos3_drop_rotate = 90
 robot_pos3_drop_height = 128
 ###############################################
-
+#######################Robot polar coordinates#############################
 
 #default change to give position_data (changed for specific position) - obsolete
 #robot_change_height = 90
@@ -80,17 +127,11 @@ app = Flask(__name__)
 app.config['SECRET_KEY'] = 'secret!'
 socketio = SocketIO(app, async_mode=async_mode)
 
-arduino_actual_position = 0
 
 ##############################arduino functions########################
 def arduino_send(number, direction):
     global name
     global ser
-
-    #ser = serial.Serial('/dev/ttyUSB0',115200,timeout=2);     #serial name for arduino getting it from global (from initialization)
-    #ser.open()
-    #print(ser.name)
-    #ser.flush()                                     #flushing serial
 
     #checking if arduino is reseting
     if(direction == "R"):
@@ -216,9 +257,12 @@ def robot_position(stretch, rotation ,height,speed):
     global swift
     swift.set_polar(stretch=stretch,rotation=rotation,height=height,speed=speed)
     robot_waiting()
+
+    #debug outputs
     #print(stretch)
     #print(rotation)
     #print(height)
+
     return
 
 def robot_gripper(catch):
@@ -228,7 +272,7 @@ def robot_gripper(catch):
 
 #taking and grabing
 def robot_take(pos):
-    #global swift
+
     #position 1
     global robot_pos1_pick_stretch,robot_pos1_pick_rotate, robot_pos1_pick_height
     global robot_pos1_drop_stretch,robot_pos1_drop_rotate, robot_pos1_drop_height
@@ -243,13 +287,7 @@ def robot_take(pos):
 
     speed = 100000
 
-    #obsolete
-    #global robot_change_height
-
-
     if(pos == 1):
-        #swift.set_polar(stretch=robot_pos1_pick_stretch,rotation=robot_pos1_pick_rotate,height=robot_pos1_pick_height,speed=100000)  #take position
-
         robot_position(robot_pos1_pick_stretch,robot_pos1_pick_rotate, robot_pos1_pick_height,speed)            #pick up ball position
         robot_gripper(True)                                                                                     #pick up ball
         default_robot_position()                                                                                #default pos
@@ -261,7 +299,6 @@ def robot_take(pos):
         default_robot_position()                                                                                #default position
 
     if(pos == 2):
-
         robot_position(robot_pos2_pick_stretch,robot_pos2_pick_rotate, robot_pos2_pick_height,speed)            #pick up ball position
         robot_gripper(True)                                                                                     #pick up ball
         default_robot_position()                                                                                #default pos
@@ -271,7 +308,6 @@ def robot_take(pos):
         robot_gripper(False)                                                                                    #drop ball
         robot_position(default_stretch,robot_pos2_pick_rotate,robot_pos2_drop_height + 5,speed)                 #go to default stretch
         default_robot_position()                                                                                #default position
-
 
     if(pos == 3):
         robot_position(robot_pos3_pick_stretch,robot_pos3_pick_rotate, robot_pos3_pick_height,speed)            #pick up ball position
@@ -290,8 +326,7 @@ def robot_take(pos):
 def robot_waiting():
     time.sleep(1)
     return
-########################TODO TODO TODO TODO TODO##############################33
-#########################################TODO TODO TODO TODO TODO##############
+
 
 #unpause function
 def unpause_function():
@@ -340,7 +375,6 @@ def ExprimentC():
 def DistanceMoving(direction,number):
     global arduino_actual_position
 
-    # arduino.arduino_move(int(number),str(direction))
     arduino_move(int(number),str(direction))
     arduino_position_update(int(number),direction)
     time.sleep(arduino_sleep(int(number)))
@@ -368,12 +402,12 @@ def RobotPosition(array):
 
     robot_position(int(stretch),int(rotate),int(height),speed) #setting specific position
     robot_waiting()
-    #swift.set_polar(stretch=stretch,rotation=rotate,height=height,speed=100000)
-    #robot_moving.move(stretch,rotate,height)
     unpause_function()
-    print(height)
-    print(stretch)
-    print(rotate)
+
+    #debug outputs
+    # print(height)
+    # print(stretch)
+    # print(rotate)
     return
 
 #default path (what server loads on start)
@@ -383,20 +417,38 @@ def index():
 
 
 #initializing connections between raspberry and arduino/uArm
-@app.before_first_request       #must do in function under this annotation otherwise restart 2 times and causing error
+@app.before_first_request       #initialization of uArm and arduino must be in the function under this annotation otherwise server restarts few times and causing error
 def initialize():
+    global cartesian
     test_a = True
     test_b = True
+
+    #convert cartesian coordinates to polar coordinates
+    if(cartesian):
+        print(Fore.BLUE + "Detecting cartesian coordinates, changing to polar")
+
+        #test to check converting cartesian to polar
+        if(test_converting(cartesian)):
+            print(Fore.GREEN + "TEST OK")
+            print(Style.RESET_ALL)
+        else:
+            print(Fore.RED + "TEST FAILED")
+            print(Style.RESET_ALL)
+
+
+        change_variables_to_polar()
+        print(Fore.GREEN + "Conversion from cartesian to polar successfull")
+        print(Style.RESET_ALL)
+        time.sleep(2)
+    else:
+        print(Fore.BLUE + "Default polar coordinates are set")
+        print(Style.RESET_ALL)
+
+
 
     try:
         global serial_name
         global ser
-
-        #serial_name = input("Please enter arduino port: ")
-        #serial_name = "/dev/" + serial_name
-        #ser.flush()
-        #print(ser.name)
-        #arduino_reset()
 
         ser = serial.Serial('/dev/ttyUSB0',115200,timeout=2)        #arduino serial
         arduino_reset()
