@@ -27,7 +27,7 @@ arduino_max = 135                   #arduino maximal position
 
 #######################Robot cartesian coordinates#############################
 #if true then coordinates are in cartesian system(must be set false to use default values - robot_pos1_pick_stretch, robot_pos1_pick_height ....)
-cartesian = True
+cartesian = False
 
 #default uArm position
 default_x = 151
@@ -439,7 +439,7 @@ def initialize():
         # print(default_stretch)
         # print(default_rotation)
         # print(default_height)
-        
+
         change_variables_to_polar()
         print(Fore.GREEN + "Conversion from cartesian to polar successfull")
         print(Style.RESET_ALL)
