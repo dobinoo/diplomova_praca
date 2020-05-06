@@ -253,6 +253,60 @@ def test_converting(cartesian):
                 print("New cartesian3",new_cartesian_pos3[i])
                 correct = False
 
+    #after test complete setting to cartesian default values
+    robot_pos1_pick_x = cartesian_pos1[0]
+    robot_pos1_pick_y = cartesian_pos1[1]
+    robot_pos1_pick_z = cartesian_pos1[2]
+    robot_pos1_drop_x = cartesian_pos1[3]
+    robot_pos1_drop_y = cartesian_pos1[4]
+    robot_pos1_drop_z = cartesian_pos1[5]
+
+    robot_pos2_pick_x = cartesian_pos2[0]
+    robot_pos2_pick_y = cartesian_pos2[1]
+    robot_pos2_pick_z = cartesian_pos2[2]
+    robot_pos2_drop_x = cartesian_pos2[3]
+    robot_pos2_drop_y = cartesian_pos2[4]
+    robot_pos2_drop_z = cartesian_pos2[5]
+
+    robot_pos3_pick_x = cartesian_pos3[0]
+    robot_pos3_pick_y = cartesian_pos3[1]
+    robot_pos3_pick_z = cartesian_pos3[2]
+    robot_pos3_drop_x = cartesian_pos3[3]
+    robot_pos3_drop_y = cartesian_pos3[4]
+    robot_pos3_drop_z = cartesian_pos3[5]
+
+    default_x = cartesian_default[0]
+    default_y = cartesian_default[1]
+    default_z = cartesian_default[2]
+
+    #after test complete setting to polar default values
+    robot_pos1_pick_stretch = polar_pos1[0]
+    robot_pos1_pick_rotate = polar_pos1[1]
+    robot_pos1_pick_height = polar_pos1[2]
+    robot_pos1_drop_stretch = polar_pos1[3]
+    robot_pos1_drop_rotate = polar_pos1[4]
+    robot_pos1_drop_height = polar_pos1[5]
+
+    robot_pos2_pick_stretch = polar_pos2[0]
+    robot_pos2_pick_rotate = polar_pos2[1]
+    robot_pos2_pick_height = polar_pos2[2]
+    robot_pos2_drop_stretch = polar_pos2[3]
+    robot_pos2_drop_rotate = polar_pos2[4]
+    robot_pos2_drop_height = polar_pos2[5]
+
+    robot_pos3_pick_stretch = polar_pos3[0]
+    robot_pos3_pick_rotate = polar_pos3[1]
+    robot_pos3_pick_height = polar_pos3[2]
+    robot_pos3_drop_stretch = polar_pos3[3]
+    robot_pos3_drop_rotate = polar_pos3[4]
+    robot_pos3_drop_height = polar_pos3[5]
+
+    default_stretch = polar_default[0]
+    default_rotate = polar_default[1]
+    default_height = polar_default[2]
+
+
+
     #in case every values are the same (after converting to and back from target system)
     if(correct):
         return True
