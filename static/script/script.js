@@ -104,6 +104,10 @@ $(document).ready(function() {
 	});
 ///////////////////////////////////
 
+//connection checking
+socket.on('connecting', function(){
+	console.log("connected");
+})
 //buttons click function experiment A
 	$('#button_a').click(function(event) {
 		console.log("Button A");

@@ -1,5 +1,4 @@
 from flask import Flask, render_template, url_for   #server libraries
-from threading import Lock
 from flask_socketio import SocketIO, emit           #flask socket libraries
 from uarm.wrapper import SwiftAPI                   #uArm SwiftPro libraries
 from colorama import Fore, Style                    #color text libraries
@@ -123,12 +122,12 @@ robot_pos3_drop_height = 128
 
 
 #setting up flask server
-async_mode = 'eventlet'
+async_mode = None
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'secret!'
 socketio = SocketIO(app, async_mode=async_mode)
-thread = None
-thread_lock = Lock()
+
+
 
 ##############################arduino functions########################
 def arduino_send(number, direction):
@@ -415,6 +414,7 @@ def RobotPosition(array):
 #default path (what server loads on start)
 @app.route('/')
 def index():
+    emit('connecting')
     return render_template('index.html', async_mode=socketio.async_mode)
 
 
@@ -493,7 +493,7 @@ def initialize():
 if __name__ == "__main__":
     try:
         #app.run(host='0.0.0.0', port=80, debug=False, use_reloader=False)
-        socketio.run(app, host='0.0.0.0', port=80, debug=True)          #starting app , 0.0.0.0 (on device local ip adress, eg 192.168.0.112) , on port 80, with debug and no reloader (restart server after changes)
+        socketio.run(app, host='0.0.0.0', port=80, debug=True, use_reloader=False)          #starting app , 0.0.0.0 (on device local ip adress, eg 192.168.0.112) , on port 80, with debug and no reloader (restart server after changes)
         #socketio.run(app, host='0.0.0.0', port=80, debug=True)
     except:
         print(Fore.RED + "ERROR STARTING SERVER")
