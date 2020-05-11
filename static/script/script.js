@@ -48,6 +48,7 @@ $(document).ready(function() {
 		document.getElementById("button_distance").disabled = false;
 		document.getElementById("button_default_position").disabled = false;
 		console.log("Upaused");
+		location.reload();																		//sometimes buttons dont unpause for client
   	return;
 	}
 	/////////////////
