@@ -249,7 +249,7 @@ def default_robot_position():
     global default_height
 
     swift.set_polar(stretch=default_stretch,rotation=default_rotation,height=default_height,speed=100000)
-    time.sleep(3)
+    time.sleep(2)
     return
 
 #set robot to certain position
@@ -360,7 +360,6 @@ def ExprimentB():
 #Experiment C
 @socketio.on('c_place', namespace='/test')
 def ExprimentC():
-    #global arduino_actual_position
     global arduino_pos3
     print("Moving")
     arduino_shortest_way(arduino_pos3)  #send arduino to experiment B with pos3
