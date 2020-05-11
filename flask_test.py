@@ -123,7 +123,7 @@ robot_pos3_drop_height = 128
 
 
 #setting up flask server
-async_mode = None
+async_mode = 'eventlet'
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'secret!'
 socketio = SocketIO(app, async_mode=async_mode)
