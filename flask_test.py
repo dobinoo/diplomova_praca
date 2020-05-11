@@ -331,7 +331,7 @@ def robot_waiting():
 
 #unpause function
 def unpause_function():
-    emit('test')
+    emit('test', namespace='/test')
     emit('unpause', namespace='/test')
     print("Unpausing buttons")
     return
