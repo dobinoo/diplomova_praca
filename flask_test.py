@@ -1,4 +1,5 @@
 from flask import Flask, render_template, url_for   #server libraries
+from threading import lock
 from flask_socketio import SocketIO, emit           #flask socket libraries
 from uarm.wrapper import SwiftAPI                   #uArm SwiftPro libraries
 from colorama import Fore, Style                    #color text libraries
