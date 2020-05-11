@@ -100,7 +100,7 @@ $(document).ready(function() {
 	//unpausing, calling from python
 	socket.on('unpause', function() {
 		Unpause();
-		console.log("unpausing");
+		//console.log("unpausing");
 	});
 ///////////////////////////////////
 
