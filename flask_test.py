@@ -414,7 +414,7 @@ def RobotPosition(array):
 #default path (what server loads on start)
 @app.route('/')
 def index():
-    emit('connecting', namespace='/test')
+    #emit('connecting', namespace='/test')
     return render_template('index.html', async_mode=socketio.async_mode)
 
 
