@@ -17,7 +17,7 @@
 
 
 ## How to use
-Install pip3 (run this in terminal ```sudo curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py``` , then "python get-pip.py") after that instal flask (```sudo pip3 install flask```), flask_socketio (```sudo pip3 install flask_socketio```) and so on until you fulfill all requirements.
+Install pip3 (run this in terminal ```sudo curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py``` , then ``` sudo python3 get-pip.py```) after that instal flask (```sudo pip3 install flask```), flask_socketio (```sudo pip3 install flask_socketio```) and so on until you fulfill all requirements.
 
 For easier use install python3.x.x and pip3 (python package installer) and run this command
 ```
