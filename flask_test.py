@@ -1,5 +1,6 @@
 from flask import Flask, render_template, url_for   #server libraries
 from flask_socketio import SocketIO, emit           #flask socket libraries
+from threading import Lock
 from uarm.wrapper import SwiftAPI                   #uArm SwiftPro libraries
 from colorama import Fore, Style                    #color text libraries
 import serial                                       #arduino connection library
@@ -126,6 +127,8 @@ async_mode = None
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'secret!'
 socketio = SocketIO(app, async_mode=async_mode)
+thread = None
+thread_lock = Lock()
 
 
 
