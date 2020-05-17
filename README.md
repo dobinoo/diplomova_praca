@@ -5,8 +5,8 @@
   Flask webserver writen in python, with gevent-websocket. Website uses javscript,html and css. It allows to control
   
 ### Requirements
-* python3.x.x        -to run webserver
-* pip3               -to easily install other requirements
+* ```python3.x.x```        -to run webserver
+* ```pip3```               -to easily install other requirements
 * flask              -server 
 * flask-socketio     -socketio
 * gevent             -gevent websocket
