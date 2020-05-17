@@ -1,10 +1,10 @@
-### Diplomová práca
+# Diplomová práca
     Version control for DP
 
-### What it includes?
+## What it includes?
   Flask webserver writen in python, with gevent-websocket. Website uses javscript,html and css. It allows to control
   
-### Requirements
+## Requirements
 * ```python3.x.x```        -to run webserver
 * ```pip3```               -to easily install other requirements
 * ```flask```              -server 
@@ -16,8 +16,8 @@
 * ```numpy```              -for conversion from/to polar coordinates
 
 
-# How to use
-If you are using python3 instal pip3 (run this in terminal ```sudo curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py``` , then "python get-pip.py") after that instal flask (```sudo pip3 install flask```), flask_socketio (```sudo pip3 install flask_socketio```) and so on until you fulfill all requirements.
+## How to use
+Install pip3 (run this in terminal ```sudo curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py``` , then "python get-pip.py") after that instal flask (```sudo pip3 install flask```), flask_socketio (```sudo pip3 install flask_socketio```) and so on until you fulfill all requirements.
 
 For easier use install python3.x.x and pip3 (python package installer) and run this command
 ```
