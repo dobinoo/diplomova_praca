@@ -4,4 +4,4 @@ Flask-SocketIO==4.3.0
 gevent==1.4.0
 gevent-websocket==0.10.1
 numpy==1.17.4
-pyserial==3.4
+serial==3.4
