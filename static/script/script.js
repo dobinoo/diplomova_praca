@@ -1,6 +1,6 @@
 //Funkcnost ak uz je stranka bezpecne nacitana
 $(document).ready(function() {
-	namespace = '/test';
+	namespace = '/DP';
 	var socket = io.connect(location.protocol + '//' + document.domain + ':' + location.port + namespace);
 
 
@@ -105,9 +105,10 @@ $(document).ready(function() {
 	});
 ///////////////////////////////////
 
-//connection checking
-socket.on('connecting', function(){
-	console.log("connected");
+//alert
+socket.on('move', function(){
+	alert("Cant move that direction");
+	console.log("cant move that way");
 })
 //buttons click function experiment A
 	$('#button_a').click(function(event) {

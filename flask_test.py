@@ -7,7 +7,7 @@ import serial                                       #arduino connection library
 import sys                                          #system library
 import os                                           #os library
 import time                                         #time library
-#import csv                                         #coma separated values library (intendet to create file log) not used
+import csv                                         #coma separated values library (intendet to create file log) not used
 from conversions import *                           #file responsible for converting from different coordinate system
 
 print("\033c", end="")                      #clears command line
@@ -130,7 +130,22 @@ socketio = SocketIO(app, async_mode=async_mode)
 thread = None
 thread_lock = Lock()
 
+#Function to initialize .csv file with header
+def data(arduino_pos, robot_pos_stretch, robot_pos_rotate, robot_pos_height):
 
+    with open('data.csv', mode='a') as data:
+        data_writer = csv.writer(data, delimiter=';', quotechar='"', quoting=csv.QUOTE_MINIMAL)         #setting where to write, delimeter ...
+        data_writer.writerow([arduino_pos, robot_pos_stretch, robot_pos_rotate, robot_pos_height])      #actual writing data
+
+#Function to write data in .csv file
+def data_start():
+
+    with open('data.csv', mode='a') as data:
+        data_writer = csv.writer(data, delimiter=';', quotechar='"', quoting=csv.QUOTE_MINIMAL)
+        data_writer.writerow([])                                                                        #empty row
+        data_writer.writerow([time.asctime()])                                                          #writing actual time
+        data_writer.writerow(['Arduino position','Robot Stretch','Robot Rotate','Robot Height'])        #writing header
+        print("Start zapisovania dat")
 
 ##############################arduino functions########################
 def arduino_send(number, direction):
@@ -143,7 +158,7 @@ def arduino_send(number, direction):
         print(Fore.BLUE + "Resetting arduino\n")
         print(Style.RESET_ALL)
     else:
-        print(Fore.BLUE + "Converting to bytes:\n")
+        print(Fore.BLUE + "Converting to bytes:")
         print(Style.RESET_ALL)
 
         #fixing number
@@ -182,18 +197,24 @@ def arduino_move(number_input, direction):
             actual_distance = actual_distance + number
             arduino_send(number, direction)
             print("\nIt will now move " + str(number_input) + "cm" + " forward\n")
+            data(actual_distance,default_stretch,default_rotation,default_height)
+            time.sleep(arduino_sleep(int(number)))
         else:
+            emit('move', namespace='/DP')
             print(Fore.RED + "Cant move that direction, current position: ",actual_distance)
-            print(Style.RESET_ALL + "\n\n")
+            print(Style.RESET_ALL)
 
     elif direction == "B":
         if actual_distance - number >= 0:
             actual_distance = actual_distance - number
             arduino_send(number, direction)
             print("It will now move " + str(number_input) + "cm" + " backward\n")
+            data(actual_distance,default_stretch,default_rotation,default_height)
+            time.sleep(arduino_sleep(int(number)))
         else:
+            emit('move', namespace='/DP')
             print(Fore.RED  + "Cant move that direction, current position: ",actual_distance)
-            print(Style.RESET_ALL + "\n\n")
+            print(Style.RESET_ALL)
     return
 
 
@@ -214,7 +235,7 @@ def arduino_shortest_way(arduino_pos):
         arduino_move(int(arduino_pos-arduino_actual_position),"F")
         print("Sleeping for: " + str(int(arduino_pos-arduino_actual_position)/7) + "s")
         sleep = int(arduino_pos-arduino_actual_position)
-        time.sleep(arduino_sleep(sleep))
+        #time.sleep(arduino_sleep(sleep))
         arduino_position_update(arduino_pos-arduino_actual_position,"F")
 
 
@@ -222,7 +243,7 @@ def arduino_shortest_way(arduino_pos):
         arduino_move(int(arduino_actual_position - arduino_pos),"B")
         print("Sleeping for: ",int(arduino_actual_position - arduino_pos))
         sleep = int(arduino_actual_position - arduino_pos)
-        time.sleep(arduino_sleep(sleep))
+        #time.sleep(arduino_sleep(sleep))
         arduino_position_update(arduino_actual_position - arduino_pos,"B")
 
     return
@@ -237,7 +258,7 @@ def arduino_position_update(change,direction):
             arduino_actual_position = change + arduino_actual_position
     if(direction == "B"):
         if(arduino_actual_position - change >= 0):
-            arduino_actual_position =arduino_actual_position -  change
+            arduino_actual_position = arduino_actual_position -  change
 
     print("Arduino new position: ",arduino_actual_position)
     return arduino_actual_position
@@ -293,33 +314,39 @@ def robot_take(pos):
 
     if(pos == 1):
         robot_position(robot_pos1_pick_stretch,robot_pos1_pick_rotate, robot_pos1_pick_height,speed)            #pick up ball position
+        data(arduino_actual_position,robot_pos1_pick_stretch,robot_pos1_pick_rotate, robot_pos1_pick_height)
         robot_gripper(True)                                                                                     #pick up ball
         default_robot_position()                                                                                #default pos
         robot_position(default_stretch,robot_pos1_pick_rotate,robot_pos1_drop_height + 5,speed)                 #go up to drop height
         robot_position(robot_pos1_drop_stretch,robot_pos1_drop_rotate, robot_pos1_drop_height + 5,speed)        #stretch to drop position
         robot_position(robot_pos1_drop_stretch,robot_pos1_drop_rotate, robot_pos1_drop_height,6000)             #lower to drop position
+        data(arduino_actual_position,robot_pos1_drop_stretch,robot_pos1_drop_rotate, robot_pos1_drop_height)
         robot_gripper(False)                                                                                    #drop ball
         robot_position(default_stretch,robot_pos1_pick_rotate,robot_pos1_drop_height + 5,speed)                 #go to default stretch
         default_robot_position()                                                                                #default position
 
     if(pos == 2):
         robot_position(robot_pos2_pick_stretch,robot_pos2_pick_rotate, robot_pos2_pick_height,speed)            #pick up ball position
+        data(arduino_actual_position,robot_pos2_pick_stretch,robot_pos2_pick_rotate, robot_pos2_pick_height)
         robot_gripper(True)                                                                                     #pick up ball
         default_robot_position()                                                                                #default pos
         robot_position(default_stretch,robot_pos2_pick_rotate,robot_pos2_drop_height + 5,speed)                 #go up to drop height
         robot_position(robot_pos2_drop_stretch,robot_pos2_drop_rotate, robot_pos2_drop_height + 5,speed)        #stretch to drop position
         robot_position(robot_pos2_drop_stretch,robot_pos2_drop_rotate, robot_pos2_drop_height,6000)             #lower to drop position
+        data(arduino_actual_position,robot_pos2_drop_stretch,robot_pos2_drop_rotate, robot_pos2_drop_height)
         robot_gripper(False)                                                                                    #drop ball
         robot_position(default_stretch,robot_pos2_pick_rotate,robot_pos2_drop_height + 5,speed)                 #go to default stretch
         default_robot_position()                                                                                #default position
 
     if(pos == 3):
         robot_position(robot_pos3_pick_stretch,robot_pos3_pick_rotate, robot_pos3_pick_height,speed)            #pick up ball position
+        data(arduino_actual_position,robot_pos3_pick_stretch,robot_pos3_pick_rotate, robot_pos3_pick_height)
         robot_gripper(True)                                                                                     #pick up ball
         default_robot_position()                                                                                #default pos
         robot_position(default_stretch,robot_pos3_pick_rotate,robot_pos3_drop_height + 5,speed)                 #go up to drop height
         robot_position(robot_pos3_drop_stretch,robot_pos3_drop_rotate, robot_pos3_drop_height + 5,speed)        #stretch to drop position
         robot_position(robot_pos3_drop_stretch,robot_pos3_drop_rotate, robot_pos3_drop_height,6000)             #lower to drop position
+        data(arduino_actual_position,robot_pos3_drop_stretch,robot_pos3_drop_rotate, robot_pos3_drop_height)
         robot_gripper(False)                                                                                    #drop ball
         robot_position(default_stretch,robot_pos3_pick_rotate,robot_pos3_drop_height + 5,speed)                 #go to default stretch
         default_robot_position()                                                                                #default position
@@ -334,40 +361,42 @@ def robot_waiting():
 
 #unpause function
 def unpause_function():
-    emit('test', namespace='/test')
-    emit('unpause', namespace='/test')
+    emit('unpause', namespace='/DP')
     print("Unpausing buttons")
     return
 
 
 #Experiment A
-@socketio.on('a_place', namespace='/test')
+@socketio.on('a_place', namespace='/DP')
 def ExprimentA():
     global arduino_pos1
     print("Moving")
     arduino_shortest_way(arduino_pos1)  #send arduino to experiment A with pos1
+    data(arduino_actual_position,default_stretch,default_rotation,default_height)
     robot_take(1)
     print("A")
     unpause_function()
     return
 
 #Experiment B
-@socketio.on('b_place', namespace='/test')
+@socketio.on('b_place', namespace='/DP')
 def ExprimentB():
     global arduino_pos2
     print("Moving")
     arduino_shortest_way(arduino_pos2)  #send arduino to experiment B with pos2
+    data(arduino_actual_position,default_stretch,default_rotation,default_height)
     robot_take(2)
     print("B")
     unpause_function()
     return
 
 #Experiment C
-@socketio.on('c_place', namespace='/test')
+@socketio.on('c_place', namespace='/DP')
 def ExprimentC():
     global arduino_pos3
     print("Moving")
     arduino_shortest_way(arduino_pos3)  #send arduino to experiment B with pos3
+    data(arduino_actual_position,default_stretch,default_rotation,default_height)
     robot_take(3)
     print("C")
     unpause_function()
@@ -375,28 +404,27 @@ def ExprimentC():
 
 
 #button distance onclick
-@socketio.on('distance', namespace='/test')
+@socketio.on('distance', namespace='/DP')
 def DistanceMoving(direction,number):
     global arduino_actual_position
-
     arduino_move(int(number),str(direction))
     arduino_position_update(int(number),direction)
-    time.sleep(arduino_sleep(int(number)))
     unpause_function()
     print("direction: ",direction)
     print("distance",number)
     return
 
-@socketio.on('default_pos', namespace='/test')
+@socketio.on('default_pos', namespace='/DP')
 def DefaultPosition():
     default_robot_position()
+    data(arduino_actual_position,default_stretch,default_rotation,default_height)
     print("Going default position\n")
     unpause_function()
     return
 
 
 #button robot position onclick
-@socketio.on('position', namespace='/test')
+@socketio.on('position', namespace='/DP')
 def RobotPosition(array):
     global swift
     speed = 100000
@@ -405,6 +433,7 @@ def RobotPosition(array):
     rotate = array[2]
 
     robot_position(int(stretch),int(rotate),int(height),speed) #setting specific position
+    data(arduino_actual_position,int(stretch),int(rotate),int(height))
     robot_waiting()
     unpause_function()
 
@@ -417,7 +446,7 @@ def RobotPosition(array):
 #default path (what server loads on start)
 @app.route('/')
 def index():
-    #emit('connecting', namespace='/test')
+    #emit('connecting', namespace='/DP')
     return render_template('index.html', async_mode=socketio.async_mode)
 
 
@@ -427,6 +456,8 @@ def initialize():
     global cartesian
     test_a = True
     test_b = True
+
+    data_start()            # saving data
 
     #convert cartesian coordinates to polar coordinates
     if(cartesian):
