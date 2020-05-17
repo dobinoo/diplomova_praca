@@ -15,6 +15,8 @@
 * ```colorama```           -color text output
 * ```numpy```              -for conversion from/to polar coordinates
 
+It is important to have this folder downloaded in same folder as ```uArm-Python-SDK```. Which can be downloaded here ```https://github.com/uArm-Developer/uArm-Python-SDK``` and follow steps to install properly.
+
 
 ## How to use
 Install pip3 (run this in terminal ```sudo curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py``` , then ``` sudo python3 get-pip.py```) after that instal flask (```sudo pip3 install flask```), flask_socketio (```sudo pip3 install flask_socketio```) and so on until you fulfill all requirements.
