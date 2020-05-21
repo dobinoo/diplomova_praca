@@ -110,6 +110,7 @@ socket.on('move', function(){
 	alert("Cant move that direction");
 	console.log("cant move that way");
 })
+
 //buttons click function experiment A
 	$('#button_a').click(function(event) {
 		console.log("Button A");

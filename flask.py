@@ -451,7 +451,7 @@ def index():
 
 
 #initializing connections between raspberry and arduino/uArm
-@app.before_first_request       #initialization of uArm and arduino must be in the function under this annotation otherwise server restarts few times and causing error
+@app.before_first_request                                       #initialization of uArm and arduino must be in the function under this annotation otherwise server restarts few times and causing error
 def initialize():
     global cartesian
     test_a = True

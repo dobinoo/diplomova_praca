@@ -1,6 +1,6 @@
 import math                     #math library for pow,sqrt,degrees ..
 import numpy as np              #also mathematical library but this works with arctan (math library had problem with arctan)
-from flask_test import *        #importing server file to get all globals
+from flask import *        #importing server file to get all globals
 
 
 #if ever needed polar to cartesian convertion
